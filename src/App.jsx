@@ -1,25 +1,29 @@
-import { useState } from "react";
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { ThemeProvider } from 'styled-components';
+import { useSelector } from 'react-redux';
 
-import "./App.css";
+import { selectTheme } from './redux/selectors';
+
+import { theme } from './styles/theme/theme';
+
+import { HomePage } from './pages/HomePage/HomePage';
+import { MainLayout } from './layout/MainLayout/MainLayout';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const selectedTheme = useSelector(selectTheme);
 
   return (
     <>
-      <div></div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ThemeProvider theme={theme[selectedTheme ? 'dark' : 'light']}>
+        <Suspense fallback={<span>Loading...</span>}>
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<HomePage />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </ThemeProvider>
     </>
   );
 }
